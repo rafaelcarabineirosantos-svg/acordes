@@ -1,6 +1,6 @@
 // Service worker: guarda a app em cache para funcionar offline.
 // Muda a versão sempre que alterares ficheiros, para forçar a atualização.
-const VERSION = 'acordes-v1';
+const VERSION = 'acordes-v2';
 const FILES = [
   './',
   './index.html',
@@ -12,6 +12,7 @@ const FILES = [
   './icons/icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
+  './icons/logo.png',
 ];
 
 self.addEventListener('install', (e) => {

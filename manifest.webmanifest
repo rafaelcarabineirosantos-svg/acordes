@@ -1,7 +1,7 @@
 {
   "name": "Biblioteca de Acordes",
   "short_name": "Acordes",
-  "description": "Diagramas de acordes de guitarra para descarregar",
+  "description": "Diagramas de acordes de guitarra — Escola de Guitarra Online",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
