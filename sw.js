@@ -1,6 +1,6 @@
 // Service worker: guarda a app em cache para funcionar offline.
 // Muda a versão sempre que alterares ficheiros, para forçar a atualização.
-const VERSION = 'acordes-v2';
+const VERSION = 'acordes-v3';
 const FILES = [
   './',
   './index.html',
