@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#121316">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Acordes">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" href="icons/icon-192.png">
+  <title>Biblioteca de Acordes</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-view="list">
+  <aside class="sidebar">
+    <h1>Acordes</h1>
+    <input id="search" type="search" placeholder="Procurar (ex: Am7, G/B)…" autocomplete="off">
+
+    <div class="section-title">Nota</div>
+    <div id="keys" class="chips"></div>
+
+    <div class="section-title">Tipo</div>
+    <div id="suffixes" class="list"></div>
+
+    <div class="section-title row">
+      <span>Os meus acordes</span>
+      <button id="btn-new" class="small">+ Criar</button>
+    </div>
+    <div id="custom-list" class="list"></div>
+    <div class="row gap">
+      <button id="btn-export" class="small ghost">Exportar</button>
+      <button id="btn-import" class="small ghost">Importar</button>
+      <input id="import-file" type="file" accept="application/json" hidden>
+    </div>
+
+    <div class="section-title">Nomes</div>
+    <div class="segmented" id="accidentals">
+      <button data-v="sharp" class="on">♯ (C#, F#)</button>
+      <button data-v="flat">♭ (Db, Gb)</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="mobile-topbar">
+      <button id="btn-back" class="ghost">‹ Acordes</button>
+      <span id="mobile-title"></span>
+    </div>
+
+    <section class="preview-area">
+      <div id="preview" class="preview theme-black"></div>
+      <div id="positions" class="positions"></div>
+    </section>
+
+    <section class="controls">
+      <h2 id="chord-title">—</h2>
+      <p id="chord-meta" class="meta"></p>
+
+      <div class="actions">
+        <button id="btn-add" class="primary">＋ Adicionar à seleção</button>
+        <button id="btn-save" hidden>Guardar nas Fotos</button>
+        <button id="btn-download">Descarregar ficheiro</button>
+        <button id="btn-copy" class="ghost">Copiar imagem</button>
+        <button id="btn-download-all" class="ghost">Descarregar todas as posições</button>
+        <button id="btn-edit" class="ghost">Editar como novo acorde</button>
+      </div>
+      <p id="status" class="status"></p>
+
+      <details id="options" class="options" open>
+        <summary>Opções de imagem</summary>
+
+        <label class="field">
+          <span>Nome no diagrama</span>
+          <input id="custom-name" type="text" placeholder="(automático)">
+        </label>
+
+        <div class="field">
+          <span>Fundo</span>
+          <div class="segmented" id="theme">
+            <button data-v="black" class="on">Preto</button>
+            <button data-v="white">Branco</button>
+            <button data-v="transparent">Transparente</button>
+          </div>
+        </div>
+
+        <div class="field" id="ink-field" hidden>
+          <span>Cor do diagrama (transparente)</span>
+          <div class="segmented" id="ink">
+            <button data-v="white" class="on">Branco</button>
+            <button data-v="black">Preto</button>
+          </div>
+        </div>
+
+        <label class="check"><input id="show-fingers" type="checkbox"> Mostrar números dos dedos</label>
+        <label class="check"><input id="show-title" type="checkbox" checked> Mostrar nome</label>
+
+        <div class="field">
+          <span>Formato</span>
+          <div class="segmented" id="format">
+            <button data-v="png" class="on">PNG</button>
+            <button data-v="jpeg">JPEG</button>
+          </div>
+          <small id="format-hint" class="hint" hidden>JPEG não suporta transparência — será usado fundo sólido.</small>
+        </div>
+
+        <div class="field">
+          <span>Tamanho</span>
+          <div class="segmented" id="scale">
+            <button data-v="1">800×1200</button>
+            <button data-v="2" class="on">1600×2400</button>
+            <button data-v="3">2400×3600</button>
+          </div>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <!-- Barra de seleção múltipla -->
+  <div id="selection-bar" class="selection-bar" hidden>
+    <div id="sel-thumbs" class="sel-thumbs"></div>
+    <div class="sel-actions">
+      <span id="sel-count" class="sel-count"></span>
+      <button id="btn-sel-clear" class="small ghost">Limpar</button>
+      <button id="btn-sel-save" class="primary small">Guardar nas Fotos</button>
+    </div>
+  </div>
+
+  <!-- Editor de acordes -->
+  <div id="editor" class="modal" hidden>
+    <div class="modal-box">
+      <div class="row">
+        <h2 id="editor-title">Criar acorde</h2>
+        <button id="editor-close" class="small ghost">✕</button>
+      </div>
+      <div class="editor-body">
+        <div class="editor-grid-wrap">
+          <div id="editor-grid" class="editor-grid"></div>
+          <div class="editor-fingers">
+            <span>Dedos</span>
+            <div id="editor-finger-row"></div>
+          </div>
+          <p class="hint">Toca acima da grelha para alternar X / O. Toca numa casa para colocar/retirar a bola.
+            Dedos iguais no mesmo traste formam pestana.</p>
+        </div>
+        <div class="editor-side">
+          <label class="field"><span>Nome</span><input id="editor-name" type="text" placeholder="ex: G/D"></label>
+          <label class="field"><span>Traste inicial</span><input id="editor-basefret" type="number" min="1" max="20" value="1"></label>
+          <label class="field"><span>Trastes visíveis</span><input id="editor-nfrets" type="number" min="4" max="8" value="5"></label>
+          <div id="editor-preview" class="editor-preview theme-black"></div>
+          <div class="actions">
+            <button id="editor-save" class="primary">Guardar</button>
+            <button id="editor-delete" class="ghost danger" hidden>Apagar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="chords-db.js"></script>
+  <script src="diagram.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
